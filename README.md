@@ -1,6 +1,6 @@
 # data_engineering_tasks
 
-## Task 1: Excel Mapping (Basic)
+## Task 1: Excel Mapping
 Load data from source Excel file and map monthly data to output template by month abbreviation. Extracts revenue values and populates corresponding columns.
 
 ## Task 2: Excel Consolidation
