@@ -1,6 +1,7 @@
 import argparse
 import shlex
 import sys
+import traceback
 from data_processor import DataProcessor
 
 
@@ -10,6 +11,7 @@ class InteractiveParser(argparse.ArgumentParser):
         raise ValueError("Argparse Error")
 
 
+# Sets up the argument parser with ingest, validate, and transform commands and returns the configured parser.
 def setup_parser():
     parser = InteractiveParser(prog="datatool", add_help=False)
     subparsers = parser.add_subparsers(dest="command")
@@ -27,24 +29,29 @@ def setup_parser():
     return parser
 
 
+# Displays the help message with available commands.
 def display_help_message():
-    print("\n" + "="*60)
-    print("DATATOOL - DATA ENGINEERING UTILITY")
-    print("="*60)
-    print("\nCOMMANDS:\n")
-    print("  ingest <input_file>")
-    print("    Display dataset metadata (row count, columns, data types)\n")
-    print("  validate <input_file>")
-    print("    Analyze data quality issues (nulls, duplicates, type inconsistencies)\n")
-    print("  transform <input_file> <output_file>")
-    print("    Clean dataset, remove duplicates, handle missing values, and export\n")
-    print("  help")
-    print("    Display this help message\n")
-    print("  exit")
-    print("    Close the application\n")
-    print("="*60 + "\n")
+    help_text = (
+        "\n" + "="*60 + "\n"
+        "DATATOOL - DATA ENGINEERING UTILITY\n"
+        "="*60 + "\n"
+        "\nCOMMANDS:\n"
+        "  ingest <input_file>\n"
+        "    Display dataset metadata (row count, columns, data types)\n\n"
+        "  validate <input_file>\n"
+        "    Analyze data quality issues (nulls, duplicates, type inconsistencies)\n\n"
+        "  transform <input_file> <output_file>\n"
+        "    Clean dataset, remove duplicates, handle missing values, and export\n\n"
+        "  help\n"
+        "    Display this help message\n\n"
+        "  exit\n"
+        "    Close the application\n"
+        "="*60 + "\n"
+    )
+    print(help_text)
 
 
+# Handles the parsed command arguments and calls the matching DataProcessor method.
 def handle_command(args):
     if args.command == "ingest":
         DataProcessor.ingest(args.input_file)
@@ -54,12 +61,16 @@ def handle_command(args):
         DataProcessor.transform(args.input_file, args.output_file)
 
 
+# Runs the interactive CLI loop and manages user commands until exit.
 def run_interactive_cli():
+    banner = (
+        "\n" + "="*60 + "\n"
+        "DATATOOL - DATA ENGINEERING UTILITY\n"
+        "="*60 + "\n"
+        "Enter 'help' for available commands or 'exit' to terminate.\n"
+    )
+    print(banner)
     parser = setup_parser()
-    print("\n" + "="*60)
-    print("DATATOOL - DATA ENGINEERING UTILITY")
-    print("="*60)
-    print("Enter 'help' for available commands or 'exit' to terminate.\n")
     
     while True:
         try:
@@ -86,3 +97,5 @@ def run_interactive_cli():
             sys.exit(0)
         except Exception as e:
             print(f"Unexpected error: {e}")
+            traceback.print_exc()
+
